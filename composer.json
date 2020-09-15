@@ -16,5 +16,10 @@
   "type": "drupal-library",
   "require": {
       "composer/installers": "*"
+  },
+  "extra": {
+      "branch-alias": {
+          "dev-main": "2.x-dev"
+      }
   }
 }
