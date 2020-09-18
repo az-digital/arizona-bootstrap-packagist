@@ -38,22 +38,6 @@ jobs:
           git commit -m "Arizona Bootstrap updates for ${{ github.event.client_payload.version }}"
           git push
 
-      - name: Get new updates from arizona-bootstrap
-        run: |
-          distwhitelist='css js'
-          srcroot='dist'
-          clonedir='/tmp/arizona-bootstrap'
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git config --global user.name "${GITHUB_ACTOR}"
-          git clone git@github.com:az-digital/arizona-bootstrap.git "${clonedir}"
-          (cd "${clonedir}" && git checkout ${{ github.event.client_payload.ref }})
-          for w in $distwhitelist ; do
-            rsync --recursive --delete "${clonedir}/${srcroot}/${w}" "${w}"
-          done
-          git add .
-          git commit -m "Arizona Bootstrap updates for ${{ github.event.client_payload.version }}"
-          git push
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
