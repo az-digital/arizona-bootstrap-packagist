@@ -48,3 +48,35 @@ jobs:
           release_name: "v${{ github.event.client_payload.version }}"
           draft: false
           prerelease: false #${{ contains(env.AZ_VERSION, '-alpha') }}
+
+      - run: echo "${{ toJSON(github.event.client_payload) }}" > az_bootstrap_release.json
+      - name: Upload az_bootstrap_release.json
+        uses: actions/upload-artifact@v1
+        with:
+          name: artifact
+          path: ./az_bootstrap_release.json
+
+  dispatch:
+    needs: release
+    strategy:
+      matrix:
+        repo:
+          - az-digital/az_quickstart
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download az_bootstrap_release.json
+        uses: actions/download-artifact@v1
+        with:
+          name: artifact
+
+      - name: Load event
+        run: |
+          echo "::set-env name=CLIENT_PAYLOAD::$(cat az_bootstrap_release.json | jq -c)"
+
+      - name: Notify dependencies
+        uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
+        with:
+          token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          repository: ${{ matrix.repo }}
+          event-type: az_bootstrap_release
+          client-payload: ${{ env.CLIENT_PAYLOAD }}
