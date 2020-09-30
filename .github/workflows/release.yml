@@ -69,9 +69,10 @@ jobs:
         with:
           name: artifact
 
-      - name: Load event
+      - name: Load version from event
         run: |
-          echo "::set-env name=CLIENT_PAYLOAD::$(cat az_bootstrap_release.json | jq -c)"
+          version=$(jq -r '.version' artifact/az_bootstrap_release.json)
+          echo "::set-env name=AZ_VERSION::${version}"
 
       - name: Notify dependencies
         uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
@@ -79,4 +80,4 @@ jobs:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
           repository: ${{ matrix.repo }}
           event-type: az_bootstrap_release
-          client-payload: ${{ env.CLIENT_PAYLOAD }}
+          client-payload: '{"version": "${{ env.AZ_VERSION }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
