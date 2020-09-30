@@ -48,3 +48,23 @@ jobs:
           release_name: "v${{ github.event.client_payload.version }}"
           draft: false
           prerelease: false #${{ contains(env.AZ_VERSION, '-alpha') }}
+
+  dispatch:
+    needs: release
+    strategy:
+      matrix:
+        repo:
+          - az-digital/az_quickstart
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get release data
+        run: |
+          sha=$(git rev-parse HEAD)
+          echo "::set-env name=RELEASE_SHA::${sha}"
+      - name: Notify dependencies
+        uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
+        with:
+          token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          repository: ${{ matrix.repo }}
+          event-type: az_bootstrap_release
+          client-payload: '{"version": "${{ github.event.client_payload.version }}", "sha": "${{ env.RELEASE_SHA }}"}'
