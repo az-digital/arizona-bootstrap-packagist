@@ -15,8 +15,7 @@ jobs:
           ssh-key: ${{ secrets.SELF_DEPLOY_KEY }}
 
       - name: Build variables
-        run: |
-          echo "::set-env name=AZ_BOOTSTRAP_CLONE_DIR::arizona-bootstrap"
+        run: echo "AZ_BOOTSTRAP_CLONE_DIR=arizona-bootstrap" >> ${GITHUB_ENV}
 
       - name: Get new updates from arizona-bootstrap
         uses: actions/checkout@v2
@@ -60,7 +59,7 @@ jobs:
       - name: Get release data
         run: |
           sha=$(git rev-parse HEAD)
-          echo "::set-env name=RELEASE_SHA::${sha}"
+          echo "RELEASE_SHA=${sha}" >> ${GITHUB_ENV}
       - name: Notify dependencies
         uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
         with:
