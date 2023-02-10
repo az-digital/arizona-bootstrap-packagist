@@ -70,4 +70,4 @@ jobs:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
           repository: ${{ matrix.repo }}
           event-type: az_bootstrap_release
-          client-payload: '{"version": "${{ github.event.client_payload.version }}", "sha": "${{ env.RELEASE_SHA }}"}'
+          client-payload: '{"version": "${{ github.event.client_payload.version  }}", "sha": "${{ env.RELEASE_SHA }}", "branch": "${{ github.event.client_payload.branch }}" }'
