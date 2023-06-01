@@ -18,7 +18,7 @@
       "composer/installers": "*"
   },
   "replace": {
-      "twbs/bootstrap": "*"
+      "twbs/bootstrap": "^4"
   },
   "extra": {
       "branch-alias": {
