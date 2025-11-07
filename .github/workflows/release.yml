@@ -65,7 +65,7 @@ jobs:
           sha=$(git rev-parse HEAD)
           echo "RELEASE_SHA=${sha}" >> ${GITHUB_ENV}
       - name: Notify dependencies
-        uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
+        uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f
         with:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
           repository: ${{ matrix.repo }}
