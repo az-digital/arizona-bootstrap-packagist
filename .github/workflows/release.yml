@@ -10,15 +10,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
+          ref: ${{ github.event.client_payload.branch }}
 
       - name: Build variables
         run: echo "AZ_BOOTSTRAP_CLONE_DIR=arizona-bootstrap" >> ${GITHUB_ENV}
 
       - name: Get new updates from arizona-bootstrap
-        uses: actions/checkout@v3
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: az-digital/arizona-bootstrap
           path: ${{ env.AZ_BOOTSTRAP_CLONE_DIR }}
@@ -40,15 +41,13 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2.4.1
         with:
-          commitish: "${{ env.RELEASE_SHA }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: "v${{ github.event.client_payload.version }}"
-          release_name: "v${{ github.event.client_payload.version }}"
+          name: "v${{ github.event.client_payload.version }}"
           draft: false
-          prerelease: false #${{ contains(env.AZ_VERSION, '-alpha') }}
+          prerelease: false
 
   dispatch:
     needs: release
@@ -59,13 +58,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Get release data
         run: |
           sha=$(git rev-parse HEAD)
           echo "RELEASE_SHA=${sha}" >> ${GITHUB_ENV}
       - name: Notify dependencies
-        uses: peter-evans/repository-dispatch@1708dda5703a768a0fb0ef6a7a03a0c3805ebc59
+        uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f # v4.0.0
         with:
           token: ${{ secrets.REPO_DISPATCH_TOKEN }}
           repository: ${{ matrix.repo }}
